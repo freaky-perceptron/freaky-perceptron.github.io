@@ -561,12 +561,6 @@ def layernorm(x, gamma, beta, epsilon=1e-5):
     normalized_x = (x - mean) / np.sqrt(variance + epsilon)
     return gamma * normalized_x + beta
 
-def dropout(x, rate):
-    if rate > 0:
-        keep_prob = 1 - rate
-        mask = np.random.rand(*x.shape) < keep_prob
-        return np.where(mask, x / keep_prob, 0)
-    return x
 
 # Parameters setup
 n_embd = 768
