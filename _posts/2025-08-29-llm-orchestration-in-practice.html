@@ -1,0 +1,210 @@
+---
+layout: post 
+title: "LLM Orchestration in Practice: What Actually Works in Production"
+date: 2025-08-29
+subtitle: ""
+background: '/img/posts/binary.webp'
+permalink: /posts/llm-orchestration-in-practice
+---
+
+<p style="font-style: italic; color: #666; margin-bottom: 1.5rem;">This article was originally published on <a href="https://substack.com/home/post/p-172163377" target="_blank" rel="noopener noreferrer">Substack</a>.</p>
+
+<p>Building with Generative AI is not at all a smooth ride. Sometimes you hit the wall and get stuck when what you are trying to build is not going the way you had imagined. When you first get started, it's easy to be impressed by the well-crafted demo. But production exposes the silent cracks. The smooth working demo often breaks apart once real users start to use it, cost constraints, and latency expectations come into play.</p>
+
+<p>AI systems differ from conventional software systems in many ways. Working with LLMs is less about chasing perfect prompts and more about designing resilient systems that can handle uncertainty, failure and edge cases efficiently. This blog is a reflection of those lessons and hacks that worked, and the pitfalls we stumbled into while turning raw LLMs into reliable products. An AI multi-agent system is an application that involves collaboration between multiple nodes. These agents work together to achieve common goals by sharing information, coordinating actions, and learning from each other.</p>
+
+<h3>What is an AI agent really?</h3>
+
+<p><strong>"AI Agent" has become an umbrella term for describing any autonomous system that operates with little to no human intervention.</strong> But is that really accurate? Probably not.</p>
+
+<p>In reality, AI systems are built on chained or parallel loops of tool calls. These can follow one of two approaches:</p>
+
+<ol>
+<li>A <strong>predefined sequence</strong> of actions/tool calls.</li>
+<li><strong>LLM-driven decision-making</strong>, where the model controls the flow.</li>
+</ol>
+
+<p>This is where the distinction between <strong>Workflows</strong> and <strong>Agents</strong> becomes crucial.</p>
+
+<p><strong>Workflows -</strong> A deterministic AI system where the expected outcome is known at each step. There is no autonomy in decision-making. Only the input varies at each node, not the action.</p>
+
+<p><strong>Agents -</strong> An AI system where the LLM decides how to navigate between multiple possible actions. Autonomy is key. The model dynamically chooses actions until it reaches a solution. Both the <strong>action path</strong> and the <strong>final solution</strong> are variable.</p>
+
+<h3>You are better off building a workflow instead of agent</h3>
+
+<p><strong>Letting an LLM autonomously choose actions from a predefined set can do more harm than good.</strong> Autonomy introduces hidden stochasticity. Let's be honest, <strong>LLMs are still quite dumb.</strong> The more control you surrender to LLM, the more chaos it can invite.</p>
+
+<p>You wouldn't trust an LLM to decide how much to bid in an auction or choose the "best" flight for your trip.</p>
+
+<p><strong>Why?</strong> Because without <strong>hard, rational boundaries</strong>, their "decisions" are just probabilistic guesses. Instead of granting full autonomy, you should:</p>
+
+<ol>
+<li><strong>Define strict criteria</strong> for action selection.</li>
+<li><strong>Spoon-feed</strong> the model the most plausible action or at least narrow its options to near-deterministic choices.</li>
+</ol>
+
+<h3>Please avoid third party agentic libraries!</h3>
+
+<p>The market is flooded with third-party libraries promising "easy AI agent development." Here's the uncomfortable truth: most are over-engineered abstractions that create more problems than they solve.</p>
+
+<p>Your AI application is probably having the LLM as elephant in the room which is already a pretty much major abstraction or black box to you. Adding one more surface of abstraction is a recipe for destruction.</p>
+
+<p>These frameworks add unnecessary layers between your core logic and the LLM. What starts as a "quick integration" quickly becomes a black box that turns into massive tech debt:</p>
+
+<ul>
+<li>Obfuscates tool call logic</li>
+<li>Introduces opaque error handling</li>
+<li>Locks you into someone else's design choices</li>
+</ul>
+
+<p>These agentic frameworks step by step introduce major blockers and concerns when you go to production with your agent running on one of these frameworks.</p>
+
+<p><strong>Here is what actually happens</strong></p>
+
+<p>"Just three lines of code to automate your workflow!"</p>
+
+<p>→ What they don't show: 50 hidden dependencies, 3 abstraction layers, and a complete surrender of control.</p>
+
+<p>Now your:</p>
+
+<ul>
+<li>→ Tool calls route through framework-specific decorators</li>
+<li>→ Error handling depends on their callback system</li>
+<li>→ Scaling requires understanding their proprietary "agent state" model</li>
+</ul>
+
+<p>Wait until you:</p>
+
+<ul>
+<li>→ Need custom routing logic their API doesn't expose</li>
+<li>→ Discover their "agent memory" system can't handle your scale</li>
+<li>→ Get pinned to an old LLM version because their SDK hasn't updated</li>
+</ul>
+
+<p>You're already dealing with the ultimate black box - the LLM itself. Why would you <em>voluntarily</em> wrap it in another layer of someone else's technical debt?</p>
+
+<h3>Structured response is all you need…</h3>
+
+<p>Workflows or agents are internally communicating the outcomes from one node to another. The output of one node becomes the input signal for the next one. The handoff between nodes is the signalling mechanism that determines what happens next. Ambiguity here derails everything downstream. Unstructured outputs make tool selection, task routing, and logic branching prone to errors. Structured response between nodes serves similar purpose as what json schema does to the API contracts.</p>
+
+<p>Think of an AI travel assistant. When you say <em>"Book me a trip to Bali under 20k rupees for upcoming weekend"</em>, here's what actually needs to happen under the hood:</p>
+
+<p><strong>Structured Output:</strong></p>
+
+<img class="img-fluid" src="https://substackcdn.com/image/fetch/$s_!1vwn!,w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F31a7b15a-5cfc-414a-b7a9-5f1d67c3f0d5_948x532.png" alt="LLM Orchestration in Practice">
+
+<p>Makes the further API call to book tickets no brainer. Think of it like this - every output is a contract, every tool call should be traceable, every error has predefined recovery path.</p>
+
+<p><strong>Enforcement Techniques (Ranked by Robustness)</strong></p>
+
+<ol>
+<li><strong>Pydantic Models (Gold Standard)</strong><br>
+    <img class="img-fluid" src="https://substackcdn.com/image/fetch/$s_!uRiW!,w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcbfcef9a-62d2-4dca-a8f1-23b881a8a13a_998x570.png" alt="LLM Orchestration in Practice">
+   * Validates types/ranges at runtime<br>
+   * Auto-generates OpenAPI specs</li>
+<li><strong>JSON Schema (Prompt-Level)</strong></li>
+    <img class="img-fluid" src="https://substackcdn.com/image/fetch/$s_!uRiW!,w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcbfcef9a-62d2-4dca-a8f1-23b881a8a13a_998x570.png" alt="LLM Orchestration in Practice">
+<li><strong>Tool Call</strong><br>
+    <img class="img-fluid" src="https://substackcdn.com/image/fetch/$s_!KMrM!,w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe132d429-a71b-44d4-9e42-b6c3b6ac96d4_1758x2060.png" alt="LLM Orchestration in Practice">
+   * LLM outputs directly into function args</li>
+</ol>
+
+<p>If you're using models from LLM API providers like Grok, OpenRouter, or Claude, Instructor is a solid choice for generating reliable structured output. On the other hand, if you're working with self-hosted models, Outlines tends to be the better fit.</p>
+
+<p><strong>Bonus tip:</strong></p>
+
+<p>If you don't want to rely on scaffolding frameworks like Instructor or Outlines, you might face a tricky situation: what if your chosen LLM doesn't support native tool-calling or structured JSON output?</p>
+
+<p>This is critical and often overlooked question in production systems. In scenario's like this you need to enforce the output constraints more rigorously on the prompt level such that it can only respond in one valid way.</p>
+
+<p>Through experimentation, we found XML to be the most reliable choice for structured outputs. Its explicit opening and closing tags make it easier for the model to generate consistently and much simpler for your code to parse with confidence.</p>
+
+<p>The sample system prompt is below.</p>
+
+<img class="img-fluid" src="https://substackcdn.com/image/fetch/$s_!HQmy!,w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7b2c6957-e3c6-4e29-adcd-d59e9a903bb5_2048x2284.png" alt="LLM Orchestration in Practice">
+
+<p>With the prompt like above the LLM is configured to consistently generate responses wrapped in the XML format you defined. You need to write a parser that reliably extracts the structured parameters from this XML for downstream tool execution.</p>
+
+<p><strong>Note:</strong> As a fallback strategy, if the LLM fails to produce valid XML, the system will automatically retry by prompting the model to correct its format.</p>
+
+<h3>Start with intent, then navigate</h3>
+
+<p>Before hardcoding tool sequences or granting full autonomy, <strong>first make the model classify user intent</strong>. This acts as a decision tree root:</p>
+
+<ul>
+<li>Map the high-level intent (e.g., "Is this a booking request, inquiry, or complaint?").</li>
+<li>Branch logically from there - Each intent unlocks a <em>constrained</em> set of next-step actions.</li>
+<li>Only then proceed with tool calls or workflows.</li>
+</ul>
+
+<p><strong>Why?</strong></p>
+
+<p>This approach prevents chaos by avoiding the trap of letting an LLM wander into an unbounded decision space. It strikes a balance between structure and flexibility by allowing you to define guardrails per intent. For example, in a flight booking flow, you can strictly enforce date and price rules. And importantly, it fails fast: if an intent is misclassified, you can reset early instead of wasting time debugging a broken action chain.</p>
+
+<h3>Have a fallback mechanism</h3>
+
+<p>Let's be honest. LLMs are still kind of dumb when it comes to following instructions. I've lost count of how many times they've ignored explicit formatting rules and answered in plain text, hallucinated parameters that never existed, or returned malformed structures with missing brackets and broken nesting that instantly break parsers. This isn't some rare edge case but it's the default reality of working with LLMs in production.</p>
+
+<p>Over time, we realized the real challenge isn't just about writing the perfect prompt or designing a neat schema. It's about building <strong>resilient systems</strong> that can</p>
+
+<ul>
+<li>Detect when the model has deviated from instructions.</li>
+<li>Automatically retry or reformat the query.</li>
+<li>Gracefully reroute the request or escalate to human intervention when repeated failures occur.</li>
+</ul>
+
+<h3>Allow room for clarification</h3>
+
+<p>Directly forcing the model to output the action is not a wise strategy, especially when you're building an AI system with a chat interface. There's always a possibility of unrelated or ambiguous questions slipping in, and if your system blindly tries to map every response to an action, things can break fast.</p>
+
+<p>This is where a <strong>clarification step</strong> becomes essential. Instead of guessing, the model (or a helper tool) should be able to ask back: <em>'Do you mean X or Y?'</em> or <em>'Can you provide the missing details?'</em>. By giving the system permission to pause and clarify, you dramatically reduce the risk of misfires.</p>
+
+<p>I've found that introducing a dedicated <strong>clarification questions tool</strong> is a game-changer. It acts as a safeguard between intent detection and action execution ensuring that when the user's request is vague, incomplete, or contradictory, the system doesn't rush ahead but instead engages in a short back-and-forth to understand the details. Only once the intent is clear does the system proceed to trigger the corresponding action.</p>
+
+<h3>Effective RAG > Finetune</h3>
+
+<p>It's probably generally accepted at this point. We get the hype around having your own customized model but in reality, you almost never need it. Fine-tuning often does more harm than good if your dataset is noisy, imbalanced, or simply too small. What you actually need is a solid <strong>RAG (Retrieval-Augmented Generation) pipeline</strong>.</p>
+
+<p>A well-designed RAG setup gives you the best of both worlds: you keep the general reasoning and language capabilities of a foundation model, while grounding its responses in your domain-specific knowledge. This not only reduces hallucinations but also makes your system far easier to update because instead of retraining a model every time your knowledge changes, you just update the underlying data source.</p>
+
+<p>In my experience, investing time in designing the right retrieval strategy (chunking, embeddings, ranking, and filtering) pays off far more than jumping straight into fine-tuning. Think of it this way: fine-tuning tries to force the model to 'remember' your knowledge, while RAG teaches it how to <em>look things up</em> reliably whenever needed.</p>
+
+<h3>Give your model some space to think!</h3>
+
+<p>Well, we humans perform better when we have a scratchpad to think and jot down the plan on before jumping into execution. LLMs are no different. Forcing them to go straight from input → final answer often leads to brittle outputs. But if you give the model an intermediate space; a structured way to "think out loud" before committing it produces far more reliable results.</p>
+
+<p>This is where techniques like <strong>chain-of-thought prompting</strong>, <strong>scratchpad reasoning</strong>, or even a simple <strong>hidden planning step</strong> come in. The idea is to separate reasoning from answering: let the model work through the logic first, then distill that into the final structured output or user-facing response. In production systems, this can mean capturing a reasoning trace, validating it, and only then executing the corresponding action.</p>
+
+<p>We found a huge jump in both precision and accuracy of my outputs once we started giving the model this 'scratchpad space.' Instead of rushing straight into the final answer, the model could first reason through the problem, validate intermediate steps, and then commit to a cleaner, more reliable response. What surprised us was how much this reduced downstream errors such as malformed JSONs, hallucinated parameters, or missing fields suddenly became far less frequent.</p>
+
+<p><strong>Okay, but why does it happen?</strong></p>
+
+<p>LLMs are autoregressive models, which means they generate text token by token, with each next token being chosen based on the likelihood of following the previous ones. When you directly force them to jump to the final answer, they often default to the most statistically likely continuation even if it's shallow, imprecise, or structurally wrong.</p>
+
+<p>By contrast, when you allow them a scratchpad or reasoning space, you're effectively guiding the model to lay out intermediate steps. This shifts the distribution of likely outputs toward more structured, logical sequences, reducing the chances of it drifting into malformed or hallucinated answers. In other words, you're hacking the model's probability space: instead of gambling on it hitting the perfect response in one go, you let it build the path step by step.</p>
+
+<p><strong>Pro tip: Make the model think <em>before</em> it answers</strong></p>
+
+<p>Want the non-reasoning model to reason first and only then produce the final action/output? Give it a <strong>private scratchpad</strong> to think out loud.</p>
+
+<p><strong>How:</strong> Ask the model to emit reasoning inside a confined XML tag, e.g. <code>&lt;thinking&gt;...&lt;/thinking&gt;</code>, followed by the final, machine-readable output. You then <strong>strip the</strong> <code>&lt;thinking&gt;</code> <strong>block</strong> before returning anything to the user or downstream tools.</p>
+
+<img class="img-fluid" src="https://substackcdn.com/image/fetch/$s_!GFD2!,w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdfb53e4d-9c6d-4342-a207-83821e53b82d_1352x608.png" alt="LLM Orchestration in Practice">
+
+<p>How does it help?</p>
+
+<ul>
+<li>As an AI Engineer, you get visibility into the model's reasoning. This makes debugging far easier as you now can see <em>why</em> the model made a certain choice.</li>
+<li>You can define the reasoning/thinking constraint so that model always starts thinking in valid direction before producing an output.</li>
+</ul>
+
+<h3>Keep the end user engaged</h3>
+
+<p>All AI applications struggle to balance two north-star metrics: <strong>latency</strong> and <strong>cost</strong>. If your system takes too long to respond, users feel like it's broken. If you throw too much compute at it, the costs spiral quickly.</p>
+
+<p>One practical way to reduce the <em>perception</em> of latency is to <strong>stream intermediate steps back to the user while the system is working</strong>. For example, when a chain of tool calls is being executed; let's say the model first classifies intent, then calls a retrieval step, then hits an external API. You don't need to keep the user staring at a blank chat window. Instead, you can surface a running commentary: <em>"Searching flight options…"</em>, <em>"Checking prices under ₹8,000…"</em>, <em>"Validating dates…"</em>.</p>
+
+<p>This trick serves two purposes. First, it reassures the user that the system is alive and making progress (instead of stalling). Second, it mirrors the way humans think aloud when solving a task, which makes the interaction feel more natural. As a result users perceive the system as faster and more intelligent, even if the underlying operations still take the same amount of time.</p>
+
+<p>In my experience, adding these "micro-updates" improve the UX and it also buys you engineering flexibility. You can afford a slightly longer pipeline (say, with more rigorous validation or extra retrieval steps) without the user feeling frustrated by latency.</p>
+
