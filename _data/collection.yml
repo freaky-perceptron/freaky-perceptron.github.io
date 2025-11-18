@@ -1,0 +1,62 @@
+quotes:
+  - text: "The only way to do great work is to love what you do."
+    author: "Steve Jobs"
+    source: "Stanford Commencement Speech"
+    category: "motivation"
+    
+  - text: "Be the change you wish to see in the world."
+    author: "Mahatma Gandhi"
+    source: "Various writings"
+    category: "philosophy"
+    
+  - text: "Life is what happens when you're busy making other plans."
+    author: "John Lennon"
+    source: "Beautiful Boy (Darling Boy)"
+    category: "life"
+    
+  - text: "The future belongs to those who believe in the beauty of their dreams."
+    author: "Eleanor Roosevelt"
+    source: "Various speeches"
+    category: "inspiration"
+
+writeups:
+  - title: "On Creativity"
+    subtitle: "A reflection on the nature of creative thinking"
+    content: "Creativity isn't about being original—it's about being authentic. When we create from a place of genuine curiosity and passion, we tap into something universal that resonates with others."
+    author: "Personal reflection"
+    date: "2024"
+    category: "philosophy"
+    
+  - title: "The Art of Learning"
+    subtitle: "Thoughts on continuous learning and personal growth"
+    content: "Learning is not a destination but a journey. Each new piece of knowledge opens doors to possibilities we never knew existed, and each challenge overcome makes us stronger and more capable."
+    author: "Personal reflection"
+    date: "2024"
+    category: "education"
+
+poems:
+  - title: "Still I Rise"
+    author: "Maya Angelou"
+    content: |
+      You may write me down in history
+      With your bitter, twisted lies,
+      You may trod me in the very dirt
+      But still, like dust, I'll rise.
+      
+      Does my sassiness upset you?
+      Why are you beset with gloom?
+      'Cause I walk like I've got oil wells
+      Pumping in my living room.
+    source: "Still I Rise (1978)"
+    category: "empowerment"
+    
+  - title: "The Road Not Taken"
+    author: "Robert Frost"
+    content: |
+      Two roads diverged in a yellow wood,
+      And sorry I could not travel both
+      And be one traveler, long I stood
+      And looked down one as far as I could
+      To where it bent in the undergrowth;
+    source: "Mountain Interval (1916)"
+    category: "choices"

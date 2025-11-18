@@ -3,3 +3,25 @@
 ---
 
 @import "styles";
+@import "simple-headers";
+
+// Sticky footer styles
+html,
+body {
+  height: 100%;
+}
+
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-wrapper main {
+  flex: 1 0 auto;
+}
+
+.site-wrapper footer {
+  margin-top: auto;
+  flex-shrink: 0;
+}

@@ -6,11 +6,15 @@
 
 <body>
 
-  {% include navbar.html %}
+  <div class="site-wrapper d-flex flex-column min-vh-100">
+    {% include navbar.html %}
 
-  {{ content }}
+    <main class="flex-fill">
+      {{ content }}
+    </main>
 
-  {% include footer.html %}
+    {% include footer.html %}
+  </div>
 
   {% include scripts.html %}
 

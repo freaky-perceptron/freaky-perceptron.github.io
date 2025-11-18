@@ -1,0 +1,441 @@
+---
+---
+
+.simple-page-header,
+.simple-home-header {
+  padding: 2rem 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 3rem;
+}
+
+.simple-page-header h1,
+.simple-home-header h1 {
+  font-weight: 300;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.simple-page-header .lead,
+.simple-home-header .lead {
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 0;
+}
+
+.display-4 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+.lead {
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Ensure navbar is visible and content doesn't hide behind it */
+body {
+  padding-top: 76px; /* Height of the fixed navbar */
+}
+
+.navbar {
+  z-index: 1030; /* Ensure navbar is above other content */
+  background-color: #fff !important;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.navbar-brand {
+  color: #333 !important;
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link {
+  color: #333 !important;
+  font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #007bff !important;
+}
+
+.navbar-light .navbar-toggler {
+  border-color: #ddd;
+}
+
+/* Adjust simple headers to work with fixed navbar */
+.simple-page-header,
+.simple-home-header {
+  margin-top: 1rem;
+}
+
+/* Post page styling - reduced scale */
+.simple-post-header {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 2rem;
+}
+
+.post-title {
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #333;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.post-subtitle {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.post-meta {
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.5;
+}
+
+.post-meta a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.post-meta a:hover {
+  text-decoration: underline;
+}
+
+/* Reduce post content sizing */
+.post-preview h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.post-preview h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.post-preview .post-meta {
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  color: #777;
+}
+
+/* Reduce button sizes */
+.btn {
+  font-size: 0.85rem;
+  padding: 0.45rem 0.9rem;
+}
+
+.btn-primary {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.7rem;
+}
+
+/* Posts page styling - reduced font sizes */
+.post-preview {
+  margin-bottom: 2rem;
+}
+
+.post-preview h2.post-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.post-preview h3.post-subtitle {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.post-preview .post-meta {
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.post-preview .post-meta a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.post-preview .post-meta a:hover {
+  text-decoration: underline;
+}
+
+/* Pagination buttons */
+.clearfix .btn {
+  font-size: 0.7rem;
+  padding: 0.35rem 0.7rem;
+}
+
+/* Collection page styling - much smaller fonts */
+.collection-item h2, .collection-item h3, .collection-item h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  line-height: 1.2;
+}
+
+.collection-item p {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.collection-item blockquote {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.collection-item .text-muted {
+  font-size: 0.65rem;
+  line-height: 1.3;
+}
+
+.collection-item .badge {
+  font-size: 0.6rem;
+  padding: 0.2rem 0.4rem;
+}
+
+/* Post content styling - much smaller fonts */
+.post-content p {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+
+.post-content h1, .post-content h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  margin-top: 1.2rem;
+}
+
+.post-content h3, .post-content h4 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Individual post page styling */
+.post h1, .post h2, .post h3, .post h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  margin-top: 1.2rem;
+}
+
+.post p {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+
+.post blockquote {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+  padding-left: 1rem;
+  border-left: 3px solid #007bff;
+}
+
+/* General text size reduction */
+p {
+  font-size: 1.0rem;
+  line-height: 1.6;
+}
+
+ul {
+  font-size: 1.0rem;
+  line-height: 1.6;
+}
+
+ul li {
+  font-size: 1.0rem;
+  line-height: 1.6;
+}
+
+code {
+  font-size: 1.0rem;
+  line-height: 1.6;
+}
+
+.lead {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.display-4 {
+  font-size: 2.2rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+/* Theme toggle switch styling */
+.theme-switch-wrapper {
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider .fa {
+  color: #666;
+  font-size: 10px;
+  z-index: 1;
+}
+
+input:checked + .slider .fa {
+  color: white;
+}
+
+/* Dark mode styles */
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --border-color: #404040;
+  --link-color: #66b3ff;
+  --navbar-bg: #2d2d2d;
+  --navbar-border: #404040;
+  --card-bg: #2d2d2d;
+  --blockquote-border: #66b3ff;
+}
+
+[data-theme="dark"] body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .navbar {
+  background-color: var(--navbar-bg) !important;
+  border-bottom-color: var(--navbar-border);
+}
+
+[data-theme="dark"] .navbar-brand {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .navbar-nav .nav-link {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .navbar-nav .nav-link:hover {
+  color: var(--link-color) !important;
+}
+
+[data-theme="dark"] .container {
+  background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .post-title,
+[data-theme="dark"] .post-subtitle,
+[data-theme="dark"] .section-title,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .text-muted {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .post blockquote {
+  border-left-color: var(--blockquote-border);
+}
+
+[data-theme="dark"] .simple-page-header,
+[data-theme="dark"] .simple-home-header {
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .slider {
+  background-color: #555;
+}
+
+[data-theme="dark"] .slider:before {
+  background-color: #e0e0e0;
+}
+
+[data-theme="dark"] input:checked + .slider {
+  background-color: #66b3ff;
+}
+
+[data-theme="dark"] .slider .fa {
+  color: #999;
+}
+
+[data-theme="dark"] input:checked + .slider .fa {
+  color: white;
+}
