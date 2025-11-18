@@ -1,3 +1,42 @@
 // Import Core Clean Blog SCSS
 @import "../assets/vendor/startbootstrap-clean-blog/scss/styles.scss";
 
+.home-about {
+  position: relative;
+  text-align: left;
+}
+
+.home-about__photo {
+  float: right;
+  width: 180px;
+  height: 180px;
+  margin: 0 0 1.5rem 2rem;
+  border-radius: 50%;
+  border: 2px solid #eee;
+  object-fit: cover;
+  shape-outside: circle(50%);
+  clip-path: circle(50%);
+}
+
+.home-about::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media (max-width: 768px) {
+  .home-about {
+    text-align: center;
+  }
+
+  .home-about__photo {
+    float: none;
+    margin: 0 auto 1.5rem;
+    shape-outside: none;
+    clip-path: circle(50%);
+  }
+
+  .home-about__text {
+    text-align: left;
+  }
+}
