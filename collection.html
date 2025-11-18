@@ -8,184 +8,68 @@ permalink: /collection
 
 
 <!-- Main Content -->
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-lg-8 col-md-10 mx-auto">
+    <div class="col-12 px-lg-5">
+      <nav class="collection-nav">
+        <a href="#quotes">Quotes</a>
+        <a href="#writeups">Writeups</a>
+        <a href="#poems">Poems</a>
+      </nav>
       
       <!-- Quotes Section -->
-      <section class="mb-5">
-        <h2 class="section-title">Quotes</h2>
-        {% for quote in site.data.collection.quotes %}
-        <div class="quote-item mb-4">
-          <blockquote class="blockquote">
-            <p class="mb-0">"{{ quote.text }}"</p>
-            <footer class="blockquote-footer">{{ quote.author }}{% if quote.source %} - {{ quote.source }}{% endif %}</footer>
-          </blockquote>
-
+      <section class="collection-section" id="quotes">
+        <header class="collection-header">
+          <p class="collection-label">Curated lines</p>
+          <h2>Quotes</h2>
+        </header>
+        <div class="collection-grid">
+          {% for quote in site.data.collection.quotes %}
+          <article class="collection-card quote-card">
+            <p class="collection-card-text">"{{ quote.text }}"</p>
+            <p class="collection-card-meta">— {{ quote.author }}{% if quote.source %} · {{ quote.source }}{% endif %}</p>
+          </article>
+          {% endfor %}
         </div>
-        {% endfor %}
       </section>
 
       <!-- Writeups Section -->
-      <section class="mb-5">
-        <h2 class="section-title">Writeups</h2>
-        {% for writeup in site.data.collection.writeups %}
-        <div class="writeup-item mb-4">
-          <h4>{{ writeup.title }}</h4>
-          <p class="text-muted">{{ writeup.subtitle }}</p>
-          <p>{{ writeup.content }}</p>
-          <div class="writeup-meta">
-            <small class="text-muted">By {{ writeup.author }}{% if writeup.date %} • {{ writeup.date }}{% endif %}</small>
-
-          </div>
+      <section class="collection-section" id="writeups">
+        <header class="collection-header">
+          <p class="collection-label">Personal notes</p>
+          <h2>Writeups</h2>
+        </header>
+        <div class="collection-grid">
+          {% for writeup in site.data.collection.writeups %}
+          <article class="collection-card">
+            <h3 class="collection-card-title">{{ writeup.title }}</h3>
+            <p class="collection-card-subtitle">{{ writeup.subtitle }}</p>
+            <p class="collection-card-text">{{ writeup.content }}</p>
+            <p class="collection-card-meta">By {{ writeup.author }}{% if writeup.date %} · {{ writeup.date }}{% endif %}</p>
+          </article>
+          {% endfor %}
         </div>
-        {% endfor %}
       </section>
 
       <!-- Poems Section -->
-      <section class="mb-5">
-        <h2 class="section-title">Poems</h2>
-        {% for poem in site.data.collection.poems %}
-        <div class="poem-item mb-4">
-          <h4>{{ poem.title }}</h4>
-          <p class="text-muted">by {{ poem.author }}{% if poem.source %} - {{ poem.source }}{% endif %}</p>
-          <div class="poem-text">
-            {{ poem.content | newline_to_br }}
-          </div>
-
-        </div>
-        {% endfor %}
-      </section>
-
-      <!-- Add New Item Form -->
-      <section class="mb-5">
-        <h2 class="section-title">Add to Collection</h2>
-        <div class="card">
-          <div class="card-body">
-            <form id="collectionForm">
-              <div class="form-group">
-                <label for="itemType">Type</label>
-                <select class="form-control" id="itemType" required>
-                  <option value="">Choose type...</option>
-                  <option value="quote">Quote</option>
-                  <option value="writeup">Writeup</option>
-                  <option value="poem">Poem</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label for="itemTitle">Title</label>
-                <input type="text" class="form-control" id="itemTitle" placeholder="Enter title or author">
-              </div>
-              
-              <div class="form-group">
-                <label for="itemContent">Content</label>
-                <textarea class="form-control" id="itemContent" rows="4" placeholder="Enter the quote, writeup, or poem content"></textarea>
-              </div>
-              
-              <div class="form-group">
-                <label for="itemSource">Source (optional)</label>
-                <input type="text" class="form-control" id="itemSource" placeholder="Where did you find this?">
-              </div>
-              
-              <button type="submit" class="btn btn-primary">Add to Collection</button>
-            </form>
-          </div>
+      <section class="collection-section" id="poems">
+        <header class="collection-header">
+          <p class="collection-label">Verses</p>
+          <h2>Poems</h2>
+        </header>
+        <div class="collection-grid">
+          {% for poem in site.data.collection.poems %}
+          <article class="collection-card poem-card">
+            <h3 class="collection-card-title">{{ poem.title }}</h3>
+            <p class="collection-card-subtitle">By {{ poem.author }}{% if poem.source %} · {{ poem.source }}{% endif %}</p>
+            <div class="collection-card-text poem-lines">
+              {{ poem.content | newline_to_br }}
+            </div>
+          </article>
+          {% endfor %}
         </div>
       </section>
 
     </div>
   </div>
 </div>
-
-<style>
-.simple-header {
-  padding: 2rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-.simple-header h1 {
-  font-weight: 300;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.simple-header .lead {
-  font-weight: 400;
-  color: #666;
-}
-
-.section-title {
-  color: #333;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-.quote-item blockquote {
-  border-left: 4px solid #007bff;
-  padding-left: 20px;
-  margin: 0;
-}
-
-.writeup-item h4 {
-  color: #007bff;
-  margin-bottom: 10px;
-}
-
-.poem-item h4 {
-  color: #007bff;
-  margin-bottom: 10px;
-}
-
-.poem-text {
-  font-style: italic;
-  line-height: 1.8;
-}
-
-.writeup-meta {
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: 1px solid #eee;
-}
-
-
-
-.card {
-  border: 1px solid #dee2e6;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
-}
-</style>
-
-<script>
-document.getElementById('collectionForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const formData = {
-    type: document.getElementById('itemType').value,
-    title: document.getElementById('itemTitle').value,
-    content: document.getElementById('itemContent').value,
-    source: document.getElementById('itemSource').value
-  };
-  
-  // For now, just show an alert (you can implement storage later)
-  alert('Item added to collection! (Note: This is a demo - implement storage functionality as needed)');
-  
-  // Reset form
-  this.reset();
-});
-</script>
